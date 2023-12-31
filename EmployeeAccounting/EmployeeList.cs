@@ -14,6 +14,7 @@ namespace EmployeeAccounting
     public partial class EmployeeList : Form
     {
         private Employee employeeForm;
+        private EmployeeCreate employeeCreateForm;
         DataTable dataTable = new();
 
         public EmployeeList()
@@ -27,6 +28,10 @@ namespace EmployeeAccounting
             if (employeeForm != null && !employeeForm.IsDisposed)
             {
                 employeeForm.Close();
+            }
+            if (employeeCreateForm != null && !employeeCreateForm.IsDisposed)
+            {
+                employeeCreateForm.Close();
             }
             if (Application.OpenForms.Count == 0)
             {
@@ -127,16 +132,22 @@ namespace EmployeeAccounting
 
         private void EmployeeDelete(object sender, int employeeId)
         {
-            DataRow[] foundRows = dataTable.Select($"id = {employeeId}");
+            try
+            {
+                DataRow[] foundRows = dataTable.Select($"id = {employeeId}");
 
-            if (foundRows.Length > 0)
-            {
-                foundRows[0].Delete();
-                foundRows[0].AcceptChanges();
+                if (foundRows.Length > 0)
+                {
+                    foundRows[0].Delete();
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка. Сотрудника с переданным ID не найдено");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Ошибка. Не удалось удалить сотрудника.");
+                MessageBox.Show("Ошибка в при удалении сотрудника из таблицы:\n" + ex.Message);
             }
         }
 
@@ -148,13 +159,56 @@ namespace EmployeeAccounting
             {
                 employeeForm.Close();
             }
+            if (employeeCreateForm != null && !employeeCreateForm.IsDisposed)
+            {
+                employeeCreateForm.Close();
+            }
             homeForm.Show();
             this.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
+            if (employeeCreateForm == null || employeeCreateForm.IsDisposed)
+            {
+                employeeCreateForm = new EmployeeCreate();
+                employeeCreateForm.Show();
+                employeeCreateForm.EmployeeCreateEvent += CreateEmployee;
+            }
+            else
+            {
+                employeeCreateForm.BringToFront();
+            }
+        }
+
+        private void CreateEmployee(object sender, int id, string full_name, string job_title, string phone_number)
+        {
+            try
+            {
+                DataRow newRow = dataTable.NewRow();
+
+                newRow["id"] = id;
+                newRow["ФИО"] = full_name;
+                newRow["Номер телефона"] = phone_number;
+                newRow["Должность"] = job_title;
+
+                dataTable.Rows.Add(newRow);
+
+                //int rowIndex = dataTable.Rows.IndexOf(newRow);
+
+                //// Check if the rowIndex is within the valid range
+                //if (rowIndex >= 0 && rowIndex < dataGridView1.Rows.Count)
+                //{
+                //    dataGridView1.Rows[rowIndex].Selected = true;
+
+                //    // Optionally, scroll to the selected row
+                //    dataGridView1.FirstDisplayedScrollingRowIndex = rowIndex;
+                //}
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка: " + ex.Message);
+            }
         }
     }
 }

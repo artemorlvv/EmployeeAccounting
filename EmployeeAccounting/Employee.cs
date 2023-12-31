@@ -237,7 +237,7 @@ namespace EmployeeAccounting
         private void button2_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Вы уверены, что хотите удалить сотрудника?\nВместе с этим удалятся все записи в истории должностей.\nЭто действие невозможно отменить!", "Подтверждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
+            
             if (result == DialogResult.Yes)
             {
                 try
@@ -265,7 +265,7 @@ namespace EmployeeAccounting
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Ошибка: " + ex.Message);
+                    MessageBox.Show("Ошибка при удалении:\n" + ex.Message);
                 }
             }
         }
