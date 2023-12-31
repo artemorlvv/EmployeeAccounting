@@ -8,10 +8,13 @@ namespace EmployeeAccounting
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            HomeForm mainForm = new HomeForm();
+            mainForm.Show();
+            // Run the application loop without exiting when the main form is closed
+            Application.Run();
         }
     }
 }
